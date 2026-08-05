@@ -5,14 +5,16 @@ from curl_cffi import requests as curl_requests
 # ================= НАЛАШТУВАННЯ =================
 TELEGRAM_TOKEN = "8797587395:AAGGdVxbNL-R3kAJNie24y3t09uvNJXCYXc"
 
-# Список Chat ID (ваш, батька та брата)
+# Список Chat ID (ваш, батька, брата та мами)
 CHAT_IDS = [
     "5108112045",  # Ваш ID
     "5089008489",  # ID батька
-    "840192155",    # ID брата
+    "840192155",   # ID брата
     "935551950"    # ID мами
-
 ]
+
+# Куплений проксі для обходу блокування 403 від Cloudflare
+PROXY_URL = "http://f4cf95bdfb4aa722f51d__cr.de;city.munich;state.bavaria;anon.1:e6f8adf0b61673a1@46.4.139.124:10000"
 
 # Список сайтів для моніторингу
 SITES = [
@@ -48,13 +50,18 @@ def send_telegram(message):
 def main():
     target_phrase = "Наразі всі місця зайняті"
     
-    # Створюємо сесію з емуляцією мережевого відбитка Chrome 120
-    session = curl_requests.Session(impersonate="chrome120")
+    # Налаштування проксі для сесії
+    proxies = None
+    if PROXY_URL:
+        proxies = {"http": PROXY_URL, "https": PROXY_URL}
+
+    # Створюємо сесію з проксі та емуляцією Chrome 120
+    session = curl_requests.Session(impersonate="chrome120", proxies=proxies)
     
-    print("Запуск моніторингу з обходом Cloudflare (curl_cffi)...")
+    print("Запуск моніторингу з обходом Cloudflare (curl_cffi + Proxy)...")
     send_telegram(
         "🤖 <b>Бот моніторингу оновлено!</b>\n"
-        "Успішно підключено новий обхід Cloudflare.\n"
+        "Успішно підключено проксі та обхід Cloudflare.\n"
         "Стежу за:\n"
         "• Кортрейк (Бельгія)\n"
         "• Кельн (Німеччина)"
@@ -66,7 +73,6 @@ def main():
             site_url = site["url"]
             
             try:
-                # Виконуємо запит з повним маскуванням під Chrome
                 response = session.get(site_url, timeout=15)
                 
                 if response.status_code == 200:
