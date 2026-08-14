@@ -13,18 +13,14 @@ CHAT_IDS = [
     "935551950"    # ID мами
 ]
 
-# Куплений проксі для обходу блокування 403 від Cloudflare
+# Старий перевірений проксі
 PROXY_URL = "http://f4cf95bdfb4aa722f51d__cr.de;city.munich;state.bavaria;anon.1:e6f8adf0b61673a1@46.4.139.124:10000"
 
 # Список сайтів для моніторингу
 SITES = [
     {
-        "name": "Кортрейк (Бельгія)",
-        "url": "https://kortrijk.pasport.org.ua/solutions/e-queue"
-    },
-    {
-        "name": "Кельн (Німеччина)",
-        "url": "https://cologne.pasport.org.ua/solutions/e-queue"
+        "name": "Варшава (Польща)",
+        "url": "https://warszawa.pasport.org.ua/solutions/e-queue"
     }
 ]
 
@@ -50,30 +46,26 @@ def send_telegram(message):
 def main():
     target_phrase = "Наразі всі місця зайняті"
     
-    # Налаштування проксі для сесії
     proxies = None
     if PROXY_URL:
         proxies = {"http": PROXY_URL, "https": PROXY_URL}
 
-    # Створюємо сесію з проксі та емуляцією Chrome 120
-    session = curl_requests.Session(impersonate="chrome120", proxies=proxies)
-    
-    print("Запуск моніторингу з обходом Cloudflare (curl_cffi + Proxy)...")
+    print("Запуск моніторингу Варшави з обходом Cloudflare...")
     send_telegram(
         "🤖 <b>Бот моніторингу оновлено!</b>\n"
-        "Успішно підключено проксі та обхід Cloudflare.\n"
-        "Стежу за:\n"
-        "• Кортрейк (Бельгія)\n"
-        "• Кельн (Німеччина)"
+        "Тепер стежу за чергою у <b>Варшаві (Польща)</b>:\n"
+        "🔗 https://warszawa.pasport.org.ua/solutions/e-queue"
     )
 
     while True:
+        session = curl_requests.Session(impersonate="chrome120", proxies=proxies)
+        
         for site in SITES:
             city_name = site["name"]
             site_url = site["url"]
             
             try:
-                response = session.get(site_url, timeout=15)
+                response = session.get(site_url, timeout=20)
                 
                 if response.status_code == 200:
                     if target_phrase not in response.text:
@@ -98,7 +90,7 @@ def main():
             except Exception as e:
                 print(f"[{time.strftime('%H:%M:%S')}] {city_name}: Збій при запиті — {e}")
                 
-            time.sleep(5)
+            time.sleep(10)
 
         time.sleep(CHECK_INTERVAL)
 
