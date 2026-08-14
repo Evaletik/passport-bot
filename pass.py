@@ -13,8 +13,8 @@ CHAT_IDS = [
     "935551950"    # ID мами
 ]
 
-# Старий перевірений проксі
-PROXY_URL = "http://f4cf95bdfb4aa722f51d__cr.de;city.munich;state.bavaria;anon.1:e6f8adf0b61673a1@46.4.139.124:10000"
+# Ваші оновлені польські ротаційні проксі
+PROXY_URL = "http://f4cf95bdfb4aa722f51d__cr.pl;state.mazovia;anon.1:e6f8adf0b61673a1@46.4.139.124:823"
 
 # Список сайтів для моніторингу
 SITES = [
@@ -50,14 +50,16 @@ def main():
     if PROXY_URL:
         proxies = {"http": PROXY_URL, "https": PROXY_URL}
 
-    print("Запуск моніторингу Варшави з обходом Cloudflare...")
+    print("Запуск моніторингу Варшави з польським ротаційним проксі...")
     send_telegram(
         "🤖 <b>Бот моніторингу оновлено!</b>\n"
-        "Тепер стежу за чергою у <b>Варшаві (Польща)</b>:\n"
+        "Підключено польський ротаційний проксі.\n"
+        "Стежу за <b>Варшавою (Польща)</b>:\n"
         "🔗 https://warszawa.pasport.org.ua/solutions/e-queue"
     )
 
     while True:
+        # Нова сесія створюється на кожному колі, щоб ротація давала новий IP
         session = curl_requests.Session(impersonate="chrome120", proxies=proxies)
         
         for site in SITES:
