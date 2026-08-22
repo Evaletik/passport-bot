@@ -13,14 +13,18 @@ CHAT_IDS = [
     "935551950"    # ID мами
 ]
 
-# Ваші оновлені польські ротаційні проксі
+# Польський ротаційний проксі
 PROXY_URL = "http://f4cf95bdfb4aa722f51d__cr.pl;state.mazovia;anon.1:e6f8adf0b61673a1@46.4.139.124:823"
 
 # Список сайтів для моніторингу
 SITES = [
     {
-        "name": "Варшава (Польща)",
-        "url": "https://warszawa.pasport.org.ua/solutions/e-queue"
+        "name": "Кортрейк (Бельгія)",
+        "url": "https://kortrijk.pasport.org.ua/solutions/e-queue"
+    },
+    {
+        "name": "Кельн (Німеччина)",
+        "url": "https://cologne.pasport.org.ua/solutions/e-queue"
     }
 ]
 
@@ -50,16 +54,16 @@ def main():
     if PROXY_URL:
         proxies = {"http": PROXY_URL, "https": PROXY_URL}
 
-    print("Запуск моніторингу Варшави з польським ротаційним проксі...")
+    print("Запуск моніторингу Кортрейка та Кельна...")
     send_telegram(
         "🤖 <b>Бот моніторингу оновлено!</b>\n"
-        "Підключено польський ротаційний проксі.\n"
-        "Стежу за <b>Варшавою (Польща)</b>:\n"
-        "🔗 https://warszawa.pasport.org.ua/solutions/e-queue"
+        "Повернуто відстеження двох локацій:\n"
+        "• Кортрейк (Бельгія)\n"
+        "• Кельн (Німеччина)"
     )
 
     while True:
-        # Нова сесія створюється на кожному колі, щоб ротація давала новий IP
+        # Нова сесія створюється на кожному колі для зміни IP
         session = curl_requests.Session(impersonate="chrome120", proxies=proxies)
         
         for site in SITES:
